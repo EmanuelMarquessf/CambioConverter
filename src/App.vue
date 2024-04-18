@@ -1,51 +1,53 @@
 <script setup>
   import { ref } from 'vue'
   import { fetchData } from './services/freecurrency.service.js'
-  const data = async () => await fetchData();
+  import  SelectCambio from './components/SelectCambio.vue'
+  import InvertIcon from './components/icons/invert.vue'
 
+  // const data = async () => await fetchData();
+  // console.log(data)
 
-  console.log(data)
+  const cambioBase = ref('volvo')
+  const cambioTo = ref()
 
-  const valueToConvert = ref(0);
+  const changeCambio = (value) => {
+    cambioBase.value = value
+  }
+
+  const changeCambioTo = (value) => {
+    cambioTo.value = value
+  }
+
+  const invertCambio = () => {
+    const varAux = cambioBase.value;
+    cambioBase.value = cambioTo.value;
+    cambioTo.value = varAux;
+  }
 </script>
 
 <template>
   <div class="container">
     <!-- <span v-for="cambio in cambios" :key="cambio" class="child-hello">{{cambio}}</span> -->
-    <form class="formContainer" action="">
+    <div class="formContainer" action="">
       <div class="selectsContainer">
-        <div class="selectContainer">
-          <label for="cars">Convert to</label>
-          <select name="cars" id="cars">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
-          </select>
-        </div>
-        <button><></button>
-        <div class="selectContainer">
-          <label for="cars">From:</label>
-          <select name="cars" id="cars">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
-          </select>
-        </div>
+        <SelectCambio :cambio="cambioBase" @changeCambio="changeCambio"/>
+        <button @click="invertCambio()"><InvertIcon /></button>
+        <SelectCambio :cambio="cambioTo" @changeCambio="changeCambioTo"/>
       </div>
+      {{ cambioBase }}
+      {{ cambioTo }}
       <div class="flexContainerColumn">
         <label for="valueToConvert">Value</label>
         <div class="inputContainer">
           <span>R$</span>
-          <input name="valueToConvert" type="number" >
+          <input name="valueToConvert" type="number" value="valueToConvert">
         </div>
       </div>
-    </form>
+    </div>
     <label for="valueToConvert">Converter para</label>
     <div class="inputContainer">
-      <span>R$</span>
-      <input name="valueToConvert" type="number" >
+      <span>US</span>
+      <input disabled name="valueToConvert" type="number">
     </div> 
   </div>
 </template>
@@ -90,23 +92,10 @@
       gap:2rem;
       button{
         border: none;
+        border-radius: 0.5rem;
         height: 40px;
         background-color: $inputColor;
         color: $secondaryText;
-      }
-      .selectContainer{
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        gap: 0.5rem;
-        select{
-          border: none;
-          border-radius:0.5rem;
-          font-size: x-large;
-          padding: 8px 4px;
-          background-color: $inputColor;
-          color: $secondaryText;
-        }
       }
     }
     .inputContainer{
