@@ -4,25 +4,22 @@
   import  SelectCambio from './components/SelectCambio.vue'
   import InvertIcon from './components/icons/invert.vue'
 
-  // const data = async () => await fetchData();
+  // const { data } = await fetchData();
   // console.log(data)
 
-  const cambioBase = ref('volvo')
-  const cambioTo = ref()
-
-  const changeCambio = (value) => {
-    cambioBase.value = value
-  }
-
-  const changeCambioTo = (value) => {
-    cambioTo.value = value
-  }
+  const cambioBase = ref('1')
+  const cambioTo = ref('2')
+  const valueBase = ref()
 
   const invertCambio = () => {
     const varAux = cambioBase.value;
     cambioBase.value = cambioTo.value;
     cambioTo.value = varAux;
   }
+
+  const getCambioType = (data) => {
+  return Object.keys(data);
+};
 </script>
 
 <template>
@@ -30,24 +27,22 @@
     <!-- <span v-for="cambio in cambios" :key="cambio" class="child-hello">{{cambio}}</span> -->
     <div class="formContainer" action="">
       <div class="selectsContainer">
-        <SelectCambio :cambio="cambioBase" @changeCambio="changeCambio"/>
+        <SelectCambio v-model:cambio="cambioBase" >Cambio Base</SelectCambio>
         <button @click="invertCambio()"><InvertIcon /></button>
-        <SelectCambio :cambio="cambioTo" @changeCambio="changeCambioTo"/>
+        <SelectCambio v-model:cambio="cambioTo">Convert To</SelectCambio>
       </div>
-      {{ cambioBase }}
-      {{ cambioTo }}
       <div class="flexContainerColumn">
         <label for="valueToConvert">Value</label>
         <div class="inputContainer">
           <span>R$</span>
-          <input name="valueToConvert" type="number" value="valueToConvert">
+          <input v-model="valueBase" name="valueToConvert" type="number" value="valueToConvert">
         </div>
       </div>
     </div>
     <label for="valueToConvert">Converter para</label>
     <div class="inputContainer">
       <span>US</span>
-      <input disabled name="valueToConvert" type="number">
+      <input disabled name="valueToConvert" type="number" :value="(valueBase*5).toFixed(2)">
     </div> 
   </div>
 </template>

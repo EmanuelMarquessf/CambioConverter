@@ -1,33 +1,20 @@
 <script setup>
-  import { ref, defineProps, defineEmits, watch} from 'vue'
+  import { ref, watch} from 'vue'
 
-  const emit = defineEmits(['changeCambio'])
-  const props = defineProps(['cambio'])
-  
-  const cambio = ref(props.cambio)
-
-  const onChange = () => {
-    emit('changeCambio', cambio.value)
-  }
-
-  watch(() => props.cambio, () =>{
-    cambio.value = props.cambio
-  })
+  const cambio = defineModel('cambio')
 </script>
 
 <template>
   <div class="selectContainer">
-    <label for="cars">Convert</label>
-    <select v-model="cambio" @change="onChange" name="cars" id="cars">
+    <label :for="cambio"><slot></slot></label>
+    <select v-model="cambio" :name="cambio" id="cambio">
       <option value="">Selecionar</option>
-      <option value="volvo">Volvo</option>
-      <option value="saab">Saab</option>
-      <option value="mercedes">Mercedes</option>
-      <option value="audi">Audi</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
     </select>
   </div> 
-
-  {{ cambio }}
 
 </template>
 
