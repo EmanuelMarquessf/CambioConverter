@@ -2,6 +2,12 @@
   import { ref, watch} from 'vue'
 
   const cambio = defineModel('cambio')
+
+  const props = defineProps({
+    coinType: Object
+  })
+
+  console.log(props.coinType)
 </script>
 
 <template>
@@ -9,10 +15,7 @@
     <label :for="cambio"><slot></slot></label>
     <select v-model="cambio" :name="cambio" id="cambio">
       <option value="">Selecionar</option>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
+      <option v-for="(coin, codCoin) in coinType" :id="coin" :value="coin">{{ codCoin }}</option>
     </select>
   </div> 
 
