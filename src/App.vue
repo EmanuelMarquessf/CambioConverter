@@ -56,15 +56,16 @@ const cambioConfig = {
   },
 };
 
-const cambioBase = ref(cambios["USD"]);
+const codeCambioBase = ref("USD");
+const codeCambioTo = ref("BRL");
 
-const cambioTo = ref(cambios["BRL"]);
-const valueBase = ref();
+const valueBase = ref(cambios[codeCambioBase.value]);
+const valueTo = ref(0);
 
 const invertCambio = () => {
-  const varAux = cambioBase.value;
-  cambioBase.value = cambioTo.value;
-  cambioTo.value = varAux;
+  const varAux = codeCambioBase.value;
+  codeCambioBase.value = codeCambioTo.value;
+  codeCambioTo.value = varAux;
 };
 
 
@@ -80,32 +81,32 @@ const reloadAPI = () => {
     <div class="formContainer" action="">
       <div class="selectsContainer">
         <SelectCambio
-          :coinType="cambios"
-          v-model:cambio="cambioBase"
+          :codesCoin="cambios"
+          v-model:cambio="codeCambioBase"
           @change="reloadAPI"
           >Cambio Base</SelectCambio
         >
         <button @click="invertCambio()"><InvertIcon /></button>
-        <SelectCambio :coinType="cambios" v-model:cambio="cambioTo"
+        <SelectCambio :codesCoin="cambios" v-model:cambio="codeCambioTo"
           >Convert To</SelectCambio
         >
       </div>
       <div class="flexContainerColumn">
         <label for="valueToConvert">Value</label>
         <div class="inputContainer">
-          <span>Moeda 1 </span>
-          <input v-model="valueBase" name="valueToConvert" type="number" />
+          <span>{{cambioConfig[codeCambioBase].symbol}}</span>
+          <input v-model="valueBase" name="valueBase" type="number" />
         </div>
       </div>
     </div>
     <label for="valueToConvert">Converter para</label>
     <div class="inputContainer">
-      <span>Moeda 2</span>
+      <span>{{cambioConfig[codeCambioTo].symbol}}</span>
       <input
         disabled
         name="valueToConvert"
         type="number"
-        :value="(valueBase * cambioTo).toFixed(2)"
+        :value="(valueBase * cambios[codeCambioTo]).toFixed(2)"
       />
     </div>
   </div>

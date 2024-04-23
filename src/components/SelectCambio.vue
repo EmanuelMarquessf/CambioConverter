@@ -4,10 +4,9 @@
   const cambio = defineModel('cambio')
 
   const props = defineProps({
-    coinType: Object
+    codesCoin: Object
   })
 
-  console.log(props.coinType)
 </script>
 
 <template>
@@ -15,7 +14,7 @@
     <label :for="cambio"><slot></slot></label>
     <select v-model="cambio" :name="cambio" id="cambio">
       <option value="">Selecionar</option>
-      <option v-for="(coin, codCoin) in coinType" :id="coin" :value="coin">{{ codCoin }}</option>
+      <option v-for="(valueCoin, codeCoin) in props.codesCoin" :value="codeCoin">{{ codeCoin }}</option>
     </select>
   </div> 
 
