@@ -1,78 +1,46 @@
 <script setup>
-import { ref, watch } from "vue";
-import { fetchData } from "./services/freecurrency.service.js";
+import { ref, onMounted } from "vue";
+import { fetchData, fetchCoinDetail } from "./services/freecurrency.service.js";
 import SelectCambio from "./components/SelectCambio.vue";
 import InvertIcon from "./components/icons/invert.vue";
 
-// const { data } = await fetchData();
-// console.log(data)
-const cambios = {
-  BRL: 5.1924908055,
-  CAD: 1.3740801402,
-  EUR: 0.9381801045,
-  USD: 1,
-};
+const cambios = ref({});
+const cambiosConfig = ref({});
 
-const cambioConfig = {
-  EUR: {
-    symbol: "€",
-    name: "Euro",
-    symbol_native: "€",
-    decimal_digits: 2,
-    rounding: 0,
-    code: "EUR",
-    name_plural: "Euros",
-    type: "fiat",
-  },
-  USD: {
-    symbol: "$",
-    name: "US Dollar",
-    symbol_native: "$",
-    decimal_digits: 2,
-    rounding: 0,
-    code: "USD",
-    name_plural: "US dollars",
-    type: "fiat",
-  },
-  BRL: {
-    symbol: "R$",
-    name: "Brazilian Real",
-    symbol_native: "R$",
-    decimal_digits: 2,
-    rounding: 0,
-    code: "BRL",
-    name_plural: "Brazilian reals",
-    type: "fiat",
-  },
-  CAD: {
-    symbol: "CA$",
-    name: "Canadian Dollar",
-    symbol_native: "$",
-    decimal_digits: 2,
-    rounding: 0,
-    code: "CAD",
-    name_plural: "Canadian dollars",
-    type: "fiat",
-  },
-};
+onMounted(async () => {
+  const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
+  
+  cambios.value = cambiosData.data;
+  cambiosConfig.value = {
+    'valueBase' : cambiosConfigData.data[codeCambioBase.value].symbol,
+    'valueTo': cambiosConfigData.data[codeCambioTo.value].symbol,
+  }
+
+})
 
 const codeCambioBase = ref("USD");
 const codeCambioTo = ref("BRL");
 
-const valueBase = ref(cambios[codeCambioBase.value]);
-const valueTo = ref(0);
+const valueBase = ref(0);
 
 const invertCambio = () => {
   const varAux = codeCambioBase.value;
   codeCambioBase.value = codeCambioTo.value;
   codeCambioTo.value = varAux;
+
+  reloadAPI();
 };
 
-
-const reloadAPI = () => {
+const  reloadAPI = async () => {
   console.log("Reload API");
+  const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
+  
+  cambios.value = cambiosData.data;
+  cambiosConfig.value = {
+    'valueBase' : cambiosConfigData.data[codeCambioBase.value].symbol,
+    'valueTo': cambiosConfigData.data[codeCambioTo.value].symbol,
+  }
 };
-
 
 </script>
 
@@ -94,14 +62,14 @@ const reloadAPI = () => {
       <div class="flexContainerColumn">
         <label for="valueToConvert">Value</label>
         <div class="inputContainer">
-          <span>{{cambioConfig[codeCambioBase].symbol}}</span>
+          <span>{{ cambiosConfig.valueBase }}</span>
           <input v-model="valueBase" name="valueBase" type="number" />
         </div>
       </div>
     </div>
     <label for="valueToConvert">Converter para</label>
     <div class="inputContainer">
-      <span>{{cambioConfig[codeCambioTo].symbol}}</span>
+      <span>{{cambiosConfig.valueTo}}</span>
       <input
         disabled
         name="valueToConvert"
@@ -149,7 +117,7 @@ $secondaryText: #787883;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
-    gap: 2rem;
+    gap: 1rem;
     button {
       border: none;
       border-radius: 0.5rem;
@@ -165,7 +133,6 @@ $secondaryText: #787883;
     color: $text;
     display: flex;
     flex-direction: row;
-
     padding: 0.7rem;
     span {
       font-size: x-large;
