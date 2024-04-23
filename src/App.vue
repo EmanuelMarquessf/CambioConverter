@@ -7,15 +7,10 @@ import InvertIcon from "./components/icons/invert.vue";
 const cambios = ref({});
 const cambiosConfig = ref({});
 
-onMounted(async () => {
-  const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
-  
-  cambios.value = cambiosData.data;
-  cambiosConfig.value = {
-    'valueBase' : cambiosConfigData.data[codeCambioBase.value].symbol,
-    'valueTo': cambiosConfigData.data[codeCambioTo.value].symbol,
-  }
+const blockButton = ref(true)
 
+onMounted(async () => {
+  loadAPI();
 })
 
 const codeCambioBase = ref("USD");
@@ -28,11 +23,18 @@ const invertCambio = () => {
   codeCambioBase.value = codeCambioTo.value;
   codeCambioTo.value = varAux;
 
-  reloadAPI();
+  loadAPI();
+  blockButtonFunction();
 };
 
-const  reloadAPI = async () => {
-  console.log("Reload API");
+const blockButtonFunction = () => {
+  blockButton.value = false;
+  setTimeout(function(){
+    blockButton.value = true;
+  }, 2000)
+}
+
+const  loadAPI = async () => {
   const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
   
   cambios.value = cambiosData.data;
@@ -40,6 +42,8 @@ const  reloadAPI = async () => {
     'valueBase' : cambiosConfigData.data[codeCambioBase.value].symbol,
     'valueTo': cambiosConfigData.data[codeCambioTo.value].symbol,
   }
+
+
 };
 
 </script>
@@ -51,10 +55,10 @@ const  reloadAPI = async () => {
         <SelectCambio
           :codesCoin="cambios"
           v-model:cambio="codeCambioBase"
-          @change="reloadAPI"
+          @change="loadAPI"
           >Cambio Base</SelectCambio
         >
-        <button @click="invertCambio()"><InvertIcon /></button>
+        <button class="button" :class="!blockButton ? 'disabled' : ''" :disabled="!blockButton" @click="invertCambio()"><InvertIcon /></button>
         <SelectCambio :codesCoin="cambios" v-model:cambio="codeCambioTo"
           >Convert To</SelectCambio
         >
@@ -121,9 +125,14 @@ $secondaryText: #787883;
     button {
       border: none;
       border-radius: 0.5rem;
+      cursor: pointer;
       height: 40px;
       background-color: $inputColor;
       color: $secondaryText;
+    }
+    .disabled{
+      cursor: no-drop;
+      opacity: 50%;
     }
   }
   .inputContainer {
