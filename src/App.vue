@@ -1,22 +1,32 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount} from "vue";
 import { fetchData, fetchCoinDetail } from "./services/freecurrency.service.js";
+
+// Components
 import SelectCambio from "./components/SelectCambio.vue";
+import ConvertedValue from "./components/convertedValue.vue"
+// Icons
 import InvertIcon from "./components/icons/invert.vue";
 
 const cambios = ref({});
 const cambiosConfig = ref({});
-
-const blockButton = ref(true)
-
-onMounted(async () => {
-  loadAPI();
-})
+const blockButton = ref(true);
 
 const codeCambioBase = ref("USD");
 const codeCambioTo = ref("BRL");
-
 const valueBase = ref(0);
+
+onBeforeMount(async () => {
+  loadAPI();
+})
+
+const  loadAPI = async () => {
+  const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
+  
+  cambios.value = cambiosData.data;
+  cambiosConfig.value = cambiosConfigData.data;
+};
+
 
 const invertCambio = () => {
   const varAux = codeCambioBase.value;
@@ -33,53 +43,24 @@ const blockButtonFunction = () => {
     blockButton.value = true;
   }, 2000)
 }
-
-const  loadAPI = async () => {
-  const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
-  
-  cambios.value = cambiosData.data;
-  cambiosConfig.value = {
-    'valueBase' : cambiosConfigData.data[codeCambioBase.value].symbol,
-    'valueTo': cambiosConfigData.data[codeCambioTo.value].symbol,
-  }
-
-
-};
-
 </script>
 
 <template>
   <div class="container">
     <div class="formContainer" action="">
       <div class="selectsContainer">
-        <SelectCambio
-          :codesCoin="cambios"
-          v-model:cambio="codeCambioBase"
-          @change="loadAPI"
-          >Cambio Base</SelectCambio
-        >
+        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioBase" @change="loadAPI">Cambio Base</SelectCambio>
         <button class="button" :class="!blockButton ? 'disabled' : ''" :disabled="!blockButton" @click="invertCambio()"><InvertIcon /></button>
-        <SelectCambio :codesCoin="cambios" v-model:cambio="codeCambioTo"
-          >Convert To</SelectCambio
-        >
+        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioTo">Convert To</SelectCambio>
       </div>
       <div class="flexContainerColumn">
         <label for="valueToConvert">Value</label>
         <div class="inputContainer">
-          <span>{{ cambiosConfig.valueBase }}</span>
+          <span>{{ cambiosConfig[codeCambioBase].symbol }}</span>
           <input v-model="valueBase" name="valueBase" type="number" />
         </div>
       </div>
-    </div>
-    <label for="valueToConvert">Converter para</label>
-    <div class="inputContainer">
-      <span>{{cambiosConfig.valueTo}}</span>
-      <input
-        disabled
-        name="valueToConvert"
-        type="number"
-        :value="(valueBase * cambios[codeCambioTo]).toFixed(2)"
-      />
+      <ConvertedValue :value="(valueBase * cambios[codeCambioTo]).toFixed(cambiosConfig[codeCambioTo].decimal_digits)" :cambioConfig="cambiosConfig[codeCambioTo]"> Valor Convertido</ConvertedValue>
     </div>
   </div>
 </template>
@@ -103,9 +84,8 @@ $secondaryText: #787883;
 }
 .container {
   background-color: $bgColor;
+  width: 50rem;
   padding: 2rem;
-  width: 40rem;
-  height: 40rem;
   border-radius: 1rem;
   .formContainer {
     display: flex;
@@ -143,6 +123,7 @@ $secondaryText: #787883;
     display: flex;
     flex-direction: row;
     padding: 0.7rem;
+    gap: 1rem;
     span {
       font-size: x-large;
     }

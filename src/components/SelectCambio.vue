@@ -1,20 +1,16 @@
 <script setup>
-  import { ref, watch} from 'vue'
-
-  const cambio = defineModel('cambio')
-
+  const coinCode = defineModel('coinCode')
   const props = defineProps({
-    codesCoin: Object
+    cambios: Object,
   })
-
 </script>
 
 <template>
   <div class="selectContainer">
-    <label :for="cambio"><slot></slot></label>
-    <select v-model="cambio" :name="cambio" id="cambio">
+    <label :for="coinCode"><slot></slot></label>
+    <select v-model="coinCode" :name="coinCode" id="cambio">
       <option value="">Selecionar</option>
-      <option v-for="(valueCoin, codeCoin) in props.codesCoin" :value="codeCoin">{{ codeCoin }}</option>
+      <option v-for="(valueCoin, codeCoin) in props.cambios" :key="codeCoin" :value="codeCoin">{{ valueCoin.name }} ({{valueCoin.code}})</option>
     </select>
   </div> 
 
