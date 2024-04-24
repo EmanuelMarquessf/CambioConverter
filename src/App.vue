@@ -17,23 +17,23 @@ const codeCambioTo = ref("BRL");
 const valueBase = ref(0);
 
 onBeforeMount(async () => {
-  loadAPI();
-})
-
-const  loadAPI = async () => {
   const [cambiosData, cambiosConfigData] = await Promise.all([fetchData(codeCambioBase), fetchCoinDetail(codeCambioBase)]);
   
   cambios.value = cambiosData.data;
   cambiosConfig.value = cambiosConfigData.data;
-};
+})
 
+const  reloadAPI = async () => {
+  const data = await fetchData(codeCambioBase);
+  cambios.value = data.data;
+};
 
 const invertCambio = () => {
   const varAux = codeCambioBase.value;
   codeCambioBase.value = codeCambioTo.value;
   codeCambioTo.value = varAux;
 
-  loadAPI();
+  reloadAPI();
   blockButtonFunction();
 };
 
@@ -49,49 +49,67 @@ const blockButtonFunction = () => {
   <div class="container">
     <div class="formContainer" action="">
       <div class="selectsContainer">
-        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioBase" @change="loadAPI">Cambio Base</SelectCambio>
+        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioBase" @change="reloadAPI">Coin Base</SelectCambio>
         <button class="button" :class="!blockButton ? 'disabled' : ''" :disabled="!blockButton" @click="invertCambio()"><InvertIcon /></button>
         <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioTo">Convert To</SelectCambio>
       </div>
-      <div class="flexContainerColumn">
-        <label for="valueToConvert">Value</label>
-        <div class="inputContainer">
-          <span>{{ cambiosConfig[codeCambioBase].symbol }}</span>
-          <input v-model="valueBase" name="valueBase" type="number" />
+      <div class="flexContainerRow">
+        <div class="flexContainerColumn">
+          <label for="valueToConvert">Value</label>
+          <div class="inputContainer">
+            <span>{{ cambiosConfig[codeCambioBase].symbol }}</span>
+            <input v-model="valueBase" name="valueBase" type="number" />
+          </div>
         </div>
+        <ConvertedValue :value="(valueBase * cambios[codeCambioTo]).toFixed(cambiosConfig[codeCambioTo].decimal_digits)" :cambioConfig="cambiosConfig[codeCambioTo]">Converted Value</ConvertedValue>
       </div>
-      <ConvertedValue :value="(valueBase * cambios[codeCambioTo]).toFixed(cambiosConfig[codeCambioTo].decimal_digits)" :cambioConfig="cambiosConfig[codeCambioTo]"> Valor Convertido</ConvertedValue>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-$bgColor: #242424;
-$inputColor: #131315;
-$text: #e1e1e2;
-$secondaryText: #787883;
+$bgColor: #005c9e;
+$containerColor: #ffffff;
+$inputColor: #f5f5f5;
+$borderColor:#999999;
+$text: #000000;
+$secondaryText: #5d5d5d;
 
+
+$fontPrimary: sans-serif;
+$fontSecondary: sans-serif;
+
+body{
+background-color: $bgColor;
+font-family: $fontPrimary;
+display: flex;
+justify-content: center;
+}
 .flexContainerRow {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 4rem;
+  flex-grow: 1;
 }
 
 .flexContainerColumn {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex-grow: 1;
 }
 .container {
-  background-color: $bgColor;
+  background-color: $containerColor;
   width: 50rem;
   padding: 2rem;
+  margin: 4rem;
   border-radius: 1rem;
   .formContainer {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
+  
   label {
     color: $text;
     font-size: larger;
@@ -107,7 +125,7 @@ $secondaryText: #787883;
       border-radius: 0.5rem;
       cursor: pointer;
       height: 40px;
-      background-color: $inputColor;
+      background-color: #007ff7;
       color: $secondaryText;
     }
     .disabled{
@@ -115,6 +133,7 @@ $secondaryText: #787883;
       opacity: 50%;
     }
   }
+  
   .inputContainer {
     align-items: center;
     background-color: $inputColor;
@@ -122,10 +141,14 @@ $secondaryText: #787883;
     color: $text;
     display: flex;
     flex-direction: row;
-    padding: 0.7rem;
-    gap: 1rem;
+    padding: 0.7rem 0rem 0.7rem 0.7rem;
+    gap: 0.5rem;
+    border: 1px solid $borderColor;
+    flex-grow: 1;
     span {
-      font-size: x-large;
+      font-size: large;
+      width: 1.5rem;
+      color: $secondaryText;
     }
     input[type="number"] {
       &::-webkit-inner-spin-button,
@@ -141,6 +164,7 @@ $secondaryText: #787883;
       border: none;
       color: $secondaryText;
       font-size: x-large;
+      flex-grow: 1;
     }
   }
 }

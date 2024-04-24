@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="convertedValue">
+  <div class="convertedValueContainer">
     <label for="valueToConvert"><slot></slot></label>
     <div class="inputContainer">
       <span>{{ props.cambioConfig.symbol }}</span>
@@ -17,4 +17,11 @@ const props = defineProps({
   </div>
 </template>
 
-<style lang="scss"></style>
+<style scoped lang="scss">
+  .convertedValueContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+  }
+</style>
