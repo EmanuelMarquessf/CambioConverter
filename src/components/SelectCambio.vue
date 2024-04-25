@@ -16,16 +16,8 @@
 </template>
 
 <style scoped lang="scss">
-  $bgColor: #005c9e;
-  $containerColor: #ffffff;
-  $inputColor: #f5f5f5;
-  $borderColor:#999999;
-  $text: #000000;
-  $secondaryText: #5d5d5d;
-
-  $fontPrimary: sans-serif;
-  $fontSecondary: sans-serif;
-
+  @import '../src/styles/_colors';
+  @import '../src/styles/_mediaQueries';
 
   .selectContainer {
     display: flex;
@@ -34,7 +26,6 @@
     gap: 0.5rem;
     
     label{
-      font-family: $fontPrimary;
       color: $text;
       font-weight: 300;
     }
@@ -48,6 +39,13 @@
       color: $secondaryText;
       &:focus {
         outline: none;
+      }
+      @include tablet {
+        font-size: larger;
+        width: 100%
+      };
+      @include mobile{
+        font-size: medium;
       }
     }
   }

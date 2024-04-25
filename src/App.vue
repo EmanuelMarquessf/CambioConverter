@@ -49,11 +49,11 @@ const blockButtonFunction = () => {
   <div class="container">
     <div class="formContainer" action="">
       <div class="selectsContainer">
-        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioBase" @change="reloadAPI">Coin Base</SelectCambio>
+        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioBase" @change="reloadAPI">Coin base</SelectCambio>
         <button class="button" :class="!blockButton ? 'disabled' : ''" :disabled="!blockButton" @click="invertCambio()"><InvertIcon /></button>
-        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioTo">Convert To</SelectCambio>
+        <SelectCambio :cambios="cambiosConfig" v-model:coinCode="codeCambioTo">Convert to</SelectCambio>
       </div>
-      <div class="flexContainerRow">
+      <div class="dataContainer flexContainerRow">
         <div class="flexContainerColumn">
           <label for="valueToConvert">Value</label>
           <div class="inputContainer">
@@ -61,27 +61,19 @@ const blockButtonFunction = () => {
             <input v-model="valueBase" name="valueBase" type="number" />
           </div>
         </div>
-        <ConvertedValue :value="(valueBase * cambios[codeCambioTo]).toFixed(cambiosConfig[codeCambioTo].decimal_digits)" :cambioConfig="cambiosConfig[codeCambioTo]">Converted Value</ConvertedValue>
+        <ConvertedValue :value="(valueBase * cambios[codeCambioTo]).toFixed(cambiosConfig[codeCambioTo].decimal_digits)" :cambioConfig="cambiosConfig[codeCambioTo]">Converted value</ConvertedValue>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-$bgColor: #005c9e;
-$containerColor: #ffffff;
-$inputColor: #f5f5f5;
-$borderColor:#999999;
-$text: #000000;
-$secondaryText: #5d5d5d;
-
-
-$fontPrimary: sans-serif;
-$fontSecondary: sans-serif;
+@import '../src/styles/_colors';
+@import '../src/styles/_mediaQueries';
 
 body{
 background-color: $bgColor;
-font-family: $fontPrimary;
+font-family: sans-serif;
 display: flex;
 justify-content: center;
 }
@@ -90,6 +82,9 @@ justify-content: center;
   flex-direction: row;
   gap: 4rem;
   flex-grow: 1;
+  @include tablet {
+    gap: 1rem;
+  };
 }
 
 .flexContainerColumn {
@@ -99,11 +94,21 @@ justify-content: center;
   flex-grow: 1;
 }
 .container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   background-color: $containerColor;
-  width: 50rem;
+  width: auto;
   padding: 2rem;
   margin: 4rem;
   border-radius: 1rem;
+  box-shadow: 0px 10px 26px -3px rgba(0,0,0,0.1);
+  @include tablet{
+    margin: 0rem;
+  }
+  @include mobile{
+    padding: 1rem;
+  }
   .formContainer {
     display: flex;
     flex-direction: column;
@@ -113,6 +118,7 @@ justify-content: center;
   label {
     color: $text;
     font-size: larger;
+
   }
 
   .selectsContainer {
@@ -120,6 +126,10 @@ justify-content: center;
     flex-direction: row;
     align-items: flex-end;
     gap: 1rem;
+    @include tablet {
+      flex-direction: column;
+      align-items: center;
+    }
     button {
       border: none;
       border-radius: 0.5rem;
@@ -133,7 +143,11 @@ justify-content: center;
       opacity: 50%;
     }
   }
-  
+  .dataContainer{
+    @include tablet {
+      flex-direction: column;
+    }
+  }
   .inputContainer {
     align-items: center;
     background-color: $inputColor;
@@ -149,6 +163,10 @@ justify-content: center;
       font-size: large;
       width: 1.5rem;
       color: $secondaryText;
+      font-weight: 500;
+      @include mobile {
+        font-size: medium;
+      }
     }
     input[type="number"] {
       &::-webkit-inner-spin-button,
@@ -165,6 +183,13 @@ justify-content: center;
       color: $secondaryText;
       font-size: x-large;
       flex-grow: 1;
+      @include tablet {
+        font-size: larger;
+        width: 100%
+      };
+      @include mobile{
+        font-size: medium;
+      }
     }
   }
 }
