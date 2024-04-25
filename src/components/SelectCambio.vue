@@ -24,16 +24,15 @@
     flex-direction: column;
     flex-grow: 1;
     gap: 0.5rem;
-    
     label{
       color: $text;
-      font-weight: 300;
+      font-weight: 500;
     }
     select {
       border: 1px solid $borderColor;
       border-radius: 0.5rem;
       font-size: x-large;
-      font-weight: 500;
+      font-weight: 300;
       padding: 8px 4px;
       background-color: $inputColor;
       color: $secondaryText;

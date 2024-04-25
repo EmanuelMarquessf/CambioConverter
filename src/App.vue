@@ -76,6 +76,10 @@ background-color: $bgColor;
 font-family: sans-serif;
 display: flex;
 justify-content: center;
+height: 90vh;
+  @include tablet{
+    align-items: center;
+  }
 }
 .flexContainerRow {
   display: flex;
@@ -106,19 +110,20 @@ justify-content: center;
   @include tablet{
     margin: 0rem;
   }
-  @include mobile{
-    padding: 1rem;
-  }
+
   .formContainer {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    flex-grow: 1;
+    @include tablet{
+      gap: 2rem;
+    }
   }
   
   label {
     color: $text;
     font-size: larger;
-
   }
 
   .selectsContainer {
@@ -184,12 +189,9 @@ justify-content: center;
       font-size: x-large;
       flex-grow: 1;
       @include tablet {
-        font-size: larger;
+        font-size: medium;
         width: 100%
       };
-      @include mobile{
-        font-size: medium;
-      }
     }
   }
 }
